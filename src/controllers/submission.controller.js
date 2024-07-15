@@ -17,7 +17,7 @@ async function createSubmission(req,res){
     }catch(err){
         
         console.log('not matched with type set');
-
+        console.log(err);
         return res.status(StatusCodes.BAD_REQUEST).send({
             error:err,
             data:{},
