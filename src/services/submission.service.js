@@ -20,15 +20,26 @@ class SubmissionService{
         const languageCodeStub=problemAdminResponse.data.codeStubs.find(codeStub=>codeStub.language.toLowerCase()===submissionPayload.language.toLowerCase());
 
 
-        submissionPayload.code=`${languageCodeStub.startSnippet} + '\n' + ${languageCodeStub.userSnippet} + '\n' + ${languageCodeStub.endSnippet}`;
+        submissionPayload.code=languageCodeStub.startSnippet + "\n\n" + submissionPayload.code + "\n\n" + languageCodeStub.endSnippet;
+
 
         const submission=await this.submissionRepository.createSubmission(submissionPayload);
         if(!submission){
             throw new SubmissionCreationError('Failed to Create a submission in the repository');
         }
 
+
         //adding submission to the producer then Queue
-        const response=await submissionProducer(submissionPayload);
+        const response=await submissionProducer({
+            [submission._id]:{
+                code:submission.code,
+                language:submission.language,
+                inputCase:problemAdminResponse.data.testCases[0].input,
+                outputCase:problemAdminResponse.data.testCases[0].output,
+                userId:submissionPayload.userId,
+                submissionId:submission._id
+            }
+        });
         return {queueResponse:response,submission};
     }
 }
