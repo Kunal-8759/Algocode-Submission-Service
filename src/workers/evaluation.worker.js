@@ -9,7 +9,7 @@ function evaluationWorker(queue) {
             try {
                 const response = await axios.post('http://localhost:3001/sendPayload', {
                     userId: job.data.userId,
-                    payload: job.data
+                    payload: job.data.codeResponse
                 })
                 console.log(response);
               console.log(job.data);

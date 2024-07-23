@@ -3,9 +3,9 @@ const {StatusCodes} =require('http-status-codes')
 
 async function createSubmission(req,res){
     try{
+        console.log(req.body);
         SubmissionSchema.parse(req.body);
 
-        console.log(req.body);
         const response=await this.submissionService.addSubmission(req.body);
         return res.status(201).send({
             error:{},
